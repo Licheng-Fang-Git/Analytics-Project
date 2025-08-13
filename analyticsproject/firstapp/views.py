@@ -3,12 +3,12 @@ from django.http import HttpResponse
 from django.views import View
 
 # Create your views here.
-def hello_world(request):
-    return HttpResponse('Hello World')
+def index(request):
+    return render(request, "index.html")
 
 class HelloEthiopia(View):
     def get(self, request):
         return HttpResponse("Hello Ethiopia")
     
-    
+
 
