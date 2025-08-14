@@ -6,6 +6,9 @@ from django.views import View
 def index(request):
     return render(request, "index.html")
 
+def area_chart(request):
+    return render(request, 'area_chart.html')
+
 class HelloEthiopia(View):
     def get(self, request):
         return HttpResponse("Hello Ethiopia")
