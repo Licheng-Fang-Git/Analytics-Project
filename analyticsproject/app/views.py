@@ -9,6 +9,9 @@ def index(request):
 def area_chart(request):
     return render(request, 'area_chart.html')
 
+def hello_world(request):
+    return HttpResponse("Hello world")
+
 class HelloEthiopia(View):
     def get(self, request):
         return HttpResponse("Hello Ethiopia")
