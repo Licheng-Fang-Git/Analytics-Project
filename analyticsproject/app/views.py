@@ -6,7 +6,7 @@ from django.views import View
 def index(request):
     return render(request, "index.html")
 
-def area_chart(request):
+def area_charts(request):
     return render(request, 'area_chart.html')
 
 def hello_world(request):
