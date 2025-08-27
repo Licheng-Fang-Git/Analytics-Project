@@ -19,7 +19,46 @@
     </select>
 
     <canvas id="impressionsChart"></canvas>
-            
+
+    <h3>LinkedIn Post Data </h3>
+    {% comment %} <div class='overflow-x-auto rounded-lg shadow-md'>
+        <table class='min-w-full divide-y divide-gray-200 dark:divide-neutral-700' id='dataTable' >
+            <thead class = 'bg-gray-50'>
+                <tr class = 'divide-y divide-gray-200'>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">No.</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Title</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Link</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Impressions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-neutral-700" >
+            </tbody>
+        </table>
+    </div> {% endcomment %}
+
+    <div class="flex flex-col">
+    <div class="-m-1.5 overflow-x-auto">
+        <div class="p-1.5 min-w-full inline-block align-middle">
+        <div class="border border-gray-200 rounded-lg overflow-hidden dark:border-neutral-700">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700", id = 'dataTable'>
+            <thead>
+                <tr class="divide-x divide-gray-200 dark:divide-neutral-700">
+                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">N0.</th>
+                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Title</th>
+                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Link</th>
+                <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Impressions</th>
+                <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Day of Week</th>
+                <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Type</th>
+                <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Created Date</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+            </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+    </div>
     <script>
         let chart = null;
 
@@ -122,13 +161,54 @@
         }
 
         function showDataFrame(chosen_x, showXVal){
-            
+            console.log(chosen_x, showXVal)
             const url = `{% url 'table_data' %}?filter_by=${[chosen_x, showXVal]}`;
             fetch(url)
+                .then(response => {
+                    return response.text();
+                })
+                .then(data => {
+                    loadData(JSON.parse(data));
+                })
+                .catch(error => {
+                console.error('Error fetching data:', error);
+                });
 
         }
 
+        async function loadData(data){
+            const apiData = JSON.parse(data); 
+            
+            console.log(typeof apiData)
+            console.log(apiData)
+            const tbody = document.querySelector("#dataTable tbody");
+            tbody.innerHTML = '';
+            apiData.forEach((row, i) => {
+                tbody.innerHTML +=`
+                <tr class="divide-x divide-gray-200 dark:divide-neutral-700">
+                    <td class = "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">${i+1}</td>
+                    <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800" >
+                        <p class = "truncate max-w-xs">
+                            ${row.post_title}
+                        </p>
+                    </td>
+                    <td><a href="${row.post_link}" target='_blank' class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">Link</td>
+                    <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800">${row.impressions}</td>
+                    <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800">${row.day_of_week}</td>
+                    <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800">${row.type_of_post}</td>
+                    <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800">${to_date(row.created_date).substring(3)}</td>
+                </tr>`;
+                    
+            });  
+        }
+
+        function to_date(millisecondNum){
+            const newDate = new Date(millisecondNum);
+            return newDate.toDateString() ;
+        }
+
         load_graph('year')
+        {% comment %} document.addEventListener("DOMContentLoaded", loadData); {% endcomment %}
 
     </script>
 

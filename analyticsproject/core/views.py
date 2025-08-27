@@ -1,8 +1,12 @@
+from datetime import datetime
 from django.shortcuts import render
 from django.db.models import Avg
 from .models import LinkedInPost
 import pandas as pd
 from django.http import JsonResponse
+from django import template
+import json
+from django.template.response import TemplateResponse
 
 # Create your views here.
 def index(request):
@@ -42,19 +46,36 @@ def chart_data(request):
     }
     return JsonResponse(chart_data)
 
-def create_tables(request):
+
+def table_data(request):
     filter_by = request.GET.get('filter_by', '')
     comma_idx = filter_by.find(',')
-    if filter_by != '':
+    all_posts = LinkedInPost.objects.values()
+    df = pd.DataFrame(list(all_posts))
+
+    print(df['time_of_posting'].head)
+   
+    if filter_by != '' and "," in filter_by:
         chosen_x = filter_by[:comma_idx]
         label_x = filter_by[comma_idx+1:]
-        data = LinkedInPost.objects.values()
-        df = pd.DataFrame(data)
-        filtered_df = df[df[chosen_x] == int(label_x)].copy()
-        print(filtered_df[chosen_x])
         
+        if label_x == 'true':
+            filtered_df = df[df[chosen_x] == True].copy()
+        elif label_x == 'false':
+            filtered_df = df[df[chosen_x] == False].copy()
+        elif ':' in label_x:
+            filtered_df = df[df[chosen_x] == datetime.strptime(label_x, "%H:%M:%S").time()].copy()
+        else:
+            try:
+                filtered_df = df[df[chosen_x] == int(label_x)].copy()
+            except:
+                filtered_df = df[df[chosen_x] == label_x].copy()
+    else:
+        filtered_df = df.copy() 
 
-    table_data = {
-        'data': [1,2,3]
-    }
-    return JsonResponse(table_data)
+    df_to_render = filtered_df[
+        ['post_title','post_link', 'impressions', 'day_of_week', 'type_of_post', 'created_date']
+        ].copy()
+        
+    table_data = df_to_render.to_json(orient='records')
+    return JsonResponse(table_data, safe=False)

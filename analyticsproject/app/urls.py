@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import index, contact, dashboard, chart_data, create_tables
+from core.views import index, contact, dashboard, chart_data, table_data
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,5 +24,5 @@ urlpatterns = [
     path("contact/", contact, name='contact' ),
     path("dashboard/", dashboard, name ='dashboard'),
     path("api/chart_data/", chart_data, name='chart_data'),
-    path("api/table_data/", create_tables, name='table_data')
+    path("api/table_data/", table_data, name='table_data')
 ]
