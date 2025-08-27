@@ -1,0 +1,136 @@
+{% extends 'core/base.html'%}
+
+{% block title %}Dashboard{% endblock %}
+
+
+{% block content %}
+    <h1>The Dashboard page</h1> 
+    <h2 class = 'text-lg text-cyan-500'>Average Impressions Graphs</h2>
+    <label for="post_type">Filter by Post Type:</label>
+    <select  name="list" id="list" onchange='load_graph(grabListItem())'>
+        <option value='year'>Year</option>
+        <option value='day_of_week'>Day of the Week</options>
+        <option value='month'>Month</option>
+        <option value='category'>Category</option>
+        <option value='sub_category'>Sub-Category</option>
+        <option value='time_of_posting'>Time of Post</option>
+        <option value='emoji'>Emoji</option>
+        <option value='type_of_post'>Post Type</option>
+    </select>
+
+    <canvas id="impressionsChart"></canvas>
+            
+    <script>
+        let chart = null;
+
+        function grabListItem()
+        {
+            var list = document.getElementById('list');
+            var value = list.value;
+            return value;
+        };
+
+        function load_graph(chosen_x) 
+        {
+            // Construct the URL with the query parameter
+            const url = `{% url 'chart_data' %}?filter_by=${chosen_x}`;
+            
+            fetch(url)
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received:", data);
+                    updateChart(data, chosen_x);
+                })
+                .catch(error => {
+                console.error('Error fetching data:', error);
+                });
+        }
+
+        function updateChart(data, chosen_x) 
+        {
+            const ctx = document.getElementById('impressionsChart').getContext('2d');
+
+            // Destroy any existing chart instance
+            if (chart) {
+                chart.destroy();
+                console.log(chart)
+            }
+            
+            // Define title and x-axis label based on the filter
+            let titleText = 'Average Impressions';
+            let xLabel = '';
+            if (chosen_x === 'day_of_week') {
+                titleText += ' by Day of the Week';
+                xLabel = 'Day of the Week';
+            } else if (chosen_x === 'month') {
+                titleText += ' by Month';
+                xLabel = 'Month';
+            } else if (chosen_x === 'year') {
+                titleText += ' by Year';
+                xLabel = 'Year';
+            }
+
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Average Impressions',
+                        data: data.data,
+                        backgroundColor: 'rgba(0, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: titleText,
+                            font: { size: 18 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Average Impressions'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: xLabel
+                                }
+                            }
+                        },
+
+                    onClick: (event, elements, chart) => {
+                        if (elements.length > 0){
+                            const clickedElement = elements[0].index;
+                            const xLabel = data.labels[clickedElement];
+                            showDataFrame(chosen_x, xLabel);
+                        }
+                    }
+
+                    }
+            });
+        }
+
+        function showDataFrame(chosen_x, showXVal){
+            
+            const url = `{% url 'table_data' %}?filter_by=${[chosen_x, showXVal]}`;
+            fetch(url)
+
+        }
+
+        load_graph('year')
+
+    </script>
+
+{% endblock %}
+
