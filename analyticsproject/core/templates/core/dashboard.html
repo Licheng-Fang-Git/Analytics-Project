@@ -4,64 +4,108 @@
 
 
 {% block content %}
-    <h1>The Dashboard page</h1> 
-    <h2 class = 'text-lg text-cyan-500'>Average Impressions Graphs</h2>
-    <label for="post_type">Filter by Post Type:</label>
-    <select  name="list" id="list" onchange='load_graph(grabListItem())'>
-        <option value='year'>Year</option>
-        <option value='day_of_week'>Day of the Week</options>
-        <option value='month'>Month</option>
-        <option value='category'>Category</option>
-        <option value='sub_category'>Sub-Category</option>
-        <option value='time_of_posting'>Time of Post</option>
-        <option value='emoji'>Emoji</option>
-        <option value='type_of_post'>Post Type</option>
-    </select>
+    <div class="bg-black shadow-md rounded-2xl p-6 w-2/5">
+        <h1 class="text-white font-medium font-bold text-3xl" >Dashboard Page</h1> 
+    </div>
 
-    <canvas id="impressionsChart"></canvas>
+    <main class="flex-1 p-6 shadow-md bg-gray-200">
 
-    <h3>LinkedIn Post Data </h3>
-    {% comment %} <div class='overflow-x-auto rounded-lg shadow-md'>
-        <table class='min-w-full divide-y divide-gray-200 dark:divide-neutral-700' id='dataTable' >
-            <thead class = 'bg-gray-50'>
-                <tr class = 'divide-y divide-gray-200'>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">No.</th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Title</th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Link</th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Impressions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-neutral-700" >
-            </tbody>
-        </table>
-    </div> {% endcomment %}
+    <div class="bg-gray-500 rounded-lg p-6">
 
-    <div class="flex flex-col">
-    <div class="-m-1.5 overflow-x-auto">
-        <div class="p-1.5 min-w-full inline-block align-middle">
-        <div class="border border-gray-200 rounded-lg overflow-hidden dark:border-neutral-700">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700", id = 'dataTable'>
-            <thead>
-                <tr class="divide-x divide-gray-200 dark:divide-neutral-700">
-                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">N0.</th>
-                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Title</th>
-                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Link</th>
-                <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Impressions</th>
-                <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Day of Week</th>
-                <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Type</th>
-                <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Created Date</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
-            </tbody>
-            </table>
-        </div>
+        <label for="post_type" class='text-white'>Choose:</label>
+        <select  name="list" id="list" onchange='load_graph(grabListItem())' class="border rounded-lg px-3 py-2 text-gray-600 focus:ring-2 focus:ring-blue-400">
+            <option value='year'>Year</option>
+            <option value='day_of_week'>Day of the Week</options>
+            <option value='month'>Month</option>
+            <option value='category'>Category</option>
+            <option value='sub_category'>Sub-Category</option>
+            <option value='time_of_posting'>Time of Post</option>
+            <option value='emoji'>Emoji</option>
+            <option value='type_of_post'>Post Type</option>
+        </select>
+    </div>
+
+    <div>
+    <div class = "bg-white rounded-xl shadow-md overflow-hidden">
+        <canvas id="impressionsChart"></canvas>
+    </div>
+    </div>
+
+    <div>
+    <div class = "py-4">
+    <button class = 'rounded-xl shadow-lg overflow-hidden bg-cyan-100 hover: bg-cyan-800 text-white py-2 px-4 rounded'onclick = 'resetTable()' >Reset</button>
+    <div<
+    </div>
+
+    <h3 class = "py-4 text-3xl font-black text-black stroke-1 stroke-blue-200 drop-shadow-lg">LinkedIn Post Data </h3>
+    <div>
+    <div>
+    <div>
+    <div>
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <div class="p-1.5 min-w-full inline-block align-middle">
+                <div class="border border-gray-200 rounded-lg overflow-hidden dark:border-neutral-700">
+                    <table class="w-full text-left", id = 'dataTable'>
+                    <thead class = "bg-gray-100">
+                        <tr>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">N0.</th>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Title</th>
+                        <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Link</th>
+                        <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Impressions</th>
+                        <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Day of Week</th>
+                        <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Type</th>
+                        <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Created Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+
+                    </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     </div>
+    </div>
+    </div>
+    </div>
+
+    <div class = "py-4">
+        <div class=" w-1/2 max-w-xs mx-auto">
+            <div id ='year' class="py-2"></div>
+            <div id='month' class="py-2"></div>
+            <div id='day_of_week' class="py-2"></div>
+            <div id='time_interval' class="py-2"></div>
+            <div id='category' class="py-2"></div>
+            <div id='sub_category' class="py-2"></div>
+            <div id='type_post' class="py-2"></div>
+            <div id='emoji' class="py-2"></div>
+        </div>
+    </div>
+    
+    <div>
+    <div class = "bg-white rounded-xl shadow-md overflow-hidden">
+    <canvas id="filterChart"></canvas>
+    </div>
+    </div>
+    </main>
+
+    <div>
+ 
+        <div class = "gap-2 p-3">
+            <span class = "p-6 text-xl font-bold text-gray-800">Filter Selections</span>
+        <div>
+        <div id = 'filterSelections'>
+
+        </div>
+    </div>
+    </div>
+    </div>
+
     <script>
         let chart = null;
-
+        let filterChart = null;
         function grabListItem()
         {
             var list = document.getElementById('list');
@@ -91,10 +135,20 @@
         {
             const ctx = document.getElementById('impressionsChart').getContext('2d');
 
+            const barColors = [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)'
+                // Add more colors as needed
+            ];
+
             // Destroy any existing chart instance
             if (chart) {
                 chart.destroy();
-                console.log(chart)
+           
             }
             
             // Define title and x-axis label based on the filter
@@ -118,8 +172,8 @@
                     datasets: [{
                         label: 'Average Impressions',
                         data: data.data,
-                        backgroundColor: 'rgba(0, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: barColors,
+                        borderColor: barColors,
                         borderWidth: 1
                     }]
                 },
@@ -161,8 +215,8 @@
         }
 
         function showDataFrame(chosen_x, showXVal){
-            console.log(chosen_x, showXVal)
             const url = `{% url 'table_data' %}?filter_by=${[chosen_x, showXVal]}`;
+            
             fetch(url)
                 .then(response => {
                     return response.text();
@@ -178,21 +232,18 @@
 
         async function loadData(data){
             const apiData = JSON.parse(data); 
-            
-            console.log(typeof apiData)
-            console.log(apiData)
             const tbody = document.querySelector("#dataTable tbody");
             tbody.innerHTML = '';
             apiData.forEach((row, i) => {
                 tbody.innerHTML +=`
                 <tr class="divide-x divide-gray-200 dark:divide-neutral-700">
-                    <td class = "px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">${i+1}</td>
-                    <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800" >
+                    <td class = "py-4 px-6 text-gray-700">${i+1}</td>
+                    <td class = "py-4 px-6 text-gray-700 font-medium" >
                         <p class = "truncate max-w-xs">
                             ${row.post_title}
                         </p>
                     </td>
-                    <td><a href="${row.post_link}" target='_blank' class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600">Link</td>
+                    <td><a href="${row.post_link}" target='_blank' class=" "py-4 px-6 text-blue-600 hover:underline underline text-blue-600 hover:text-blue-800 visited:text-purple-600">Link</td>
                     <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800">${row.impressions}</td>
                     <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800">${row.day_of_week}</td>
                     <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800">${row.type_of_post}</td>
@@ -207,7 +258,259 @@
             return newDate.toDateString() ;
         }
 
-        load_graph('year')
+        function resetTable(){
+            const tbody = document.querySelector('#dataTable tbody');
+            tbody.innerHTML = '';
+        }
+
+        function renderMultiselect(elementId, label, call){
+            const componentHTML = `
+                <div class=" w-full max-w-xs mx-auto">
+                <div 
+                    x-data="{
+                        open: false,
+                        selectedItems: [],
+                        items : []
+                    }" 
+                    x-init = "
+                        const url = '/api/unique_data/';
+                        const response = await fetch(url);
+                        const data = await response.json();
+                       
+                        items = data.${elementId}
+                        "
+                    x-effect="
+                        $store.filters.${elementId} = selectedItems;
+                        if (${call}) {fetchFilteredData()};
+                    "
+                    @keydown.escape.prevent.stop="open = false" 
+                    @click.away="open = false" 
+                    class="relative"
+                    >
+                    <button 
+                        type="button" 
+                        @click="open = !open" 
+                        class="relative w-full py-2 pl-3 pr-10 text-left bg-white border border-gray-300 rounded-md shadow-sm cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    >
+                    <span class="flex items-center">
+                        <span 
+                            x-show="selectedItems.length === 0" 
+                            class="text-gray-500"
+                        >
+                        ${label}
+                        </span>
+                        <span 
+                            x-show="selectedItems.length > 0" 
+                            x-text="selectedItems.join(', ')" 
+                            class="block truncate"
+                        >
+                        </span>
+                        </span>
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 3a.75.75 0 01.53.22l3.5 3.5a.75.75 0 01-1.06 1.06L10 4.81 6.53 8.28a.75.75 0 01-1.06-1.06l3.5-3.5A.75.75 0 0110 3zm-3.72 9.28a.75.75 0 011.06 0L10 15.19l2.67-2.91a.75.75 0 111.06 1.06l-3.25 3.5a.75.75 0 01-1.06 0l-3.25-3.5a.75.75 0 010-1.06z" clip-rule="evenodd" />
+                        </svg>
+                        </span>
+                    </button>
+
+                    <div 
+                        x-show="open" 
+                        x-transition:leave="transition ease-in duration-100" 
+                        x-transition:leave-start="opacity-100" 
+                        x-transition:leave-end="opacity-0" 
+                        class="absolute z-10 w-full mt-1 bg-white rounded-md shadow-lg"
+                    >
+                        <ul class="py-1 overflow-auto text-base rounded-md max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                        <template x-for="item in items" :key="item">
+                            <li class="relative px-3 py-2 text-gray-900 cursor-default select-none">
+                            <div class="flex items-center">
+                            <input 
+                                type="checkbox" 
+                                :value="item" 
+                                x-model="selectedItems"
+                                class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                            >
+                                <label class="ml-3 block font-normal truncate" x-text="item"></label>
+                            </div>
+                            </li>
+                        </template>
+                        </ul>
+                    </div>
+                </div>
+                </div>
+            `;
+
+            document.getElementById(elementId).innerHTML = componentHTML;
+        }
+
+        async function fetchFilterSelection(){
+            const url = '/api/filter_select/';
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data){
+                printSelection(data);
+            }
+            {% comment %} fetch(url)
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    printSelection(data);
+                })
+                .catch(error => {
+                console.error('Error fetching data:', error);
+                }); {% endcomment %}
+        }
+
+        async function fetchFilteredData(){
+            const filters = {
+                year: Alpine.store('filters').year,
+                month: Alpine.store('filters').month,
+                day_of_week: Alpine.store('filters').day_of_week,
+                time_interval: Alpine.store('filters').time_interval,
+                category: Alpine.store('filters').category,
+                sub_category: Alpine.store('filters').sub_category,
+                emoji: Alpine.store('filters').emoji,
+                type_post: Alpine.store('filters').type_post,
+            };
+            
+            const query = new URLSearchParams()
+            for (const key in filters){
+                filters[key].forEach(v => 
+                query.append(key+'[]', v));
+            }
+
+            const response = await fetch(`/api/filtered_data/?${query.toString()}`);
+            const data = await response.json();
+            updateFilteredChart(data);
+           
+        }
+
+        function updateFilteredChart(data){
+            fetchFilterSelection()
+            const ctx = document.getElementById('filterChart').getContext('2d');
+            const barColors = [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)'
+                // Add more colors as needed
+            ];
+
+            if (filterChart){
+                filterChart.destroy();
+            }
+
+            let titleText = 'Average Impressions';
+
+            filterChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Average Impressions',
+                        data: data.data,
+                        backgroundColor: barColors,
+                        borderColor: barColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: titleText,
+                            font: { size: 18 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Average Impressions'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: data.x_label
+                                }
+                            }
+                        },
+
+                    onClick: (event, elements, chart) => {
+                        if (elements.length > 0){
+                            const clickedElement = elements[0].index;
+                            const xLabel = data.labels[clickedElement];
+                            showDataFrame(data.x_label, xLabel);
+                        }
+                    }
+
+                    }
+            });
+
+        }
+        let prevData = null
+        function printSelection(data){
+
+            if(data == prevData){
+                return
+            }
+            selectionDictionary = {};
+            
+            for (let key in data){
+                selectionDictionary[key] = data[key];
+            }
+            console.log(selectionDictionary)
+            document.getElementById('filterSelections').innerHTML = ''
+            for (let key in selectionDictionary){
+                let uniqueId = key+"1";
+                document.getElementById('filterSelections').innerHTML += `
+                <div class="flex flex-wrap gap-2 p-3" id = ${uniqueId}>
+                </div>
+                `;
+                document.getElementById(`${uniqueId}`).innerHTML += `
+                    <span class="bg-green-100 text-green-800 text-sm font-medium px-4 py-2 rounded-full">${key}:</span>
+                `;
+
+                selectionDictionary[key].forEach(val =>
+                    document.getElementById(`${uniqueId}`).innerHTML += `
+                    <span class="bg-blue-100 text-blue-800 text-sm font-medium px-4 py-2 rounded-full">${val}</span>
+                    `
+                )
+            }
+            prevData = data
+            
+        }
+
+        // Global Alpine store to track selected values
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('filters', {
+                year: [],
+                month: [],
+                day_of_week: [],
+                time_interval: [],
+                category: [],
+                sub_category: [],
+                emoji: [],
+                type_post: []
+            });
+        });
+
+        renderMultiselect('year', 'Select Year(s)', true);
+        renderMultiselect('month', 'Select Month(s)', false);
+        renderMultiselect('day_of_week', 'Select Day of Week', false);
+        renderMultiselect('time_interval', 'Select Time(s)', false);
+        renderMultiselect('category', 'Select Category(s)', false );
+        renderMultiselect('sub_category', 'Select Sub_Category(s)', false);
+        renderMultiselect('type_post', 'Select Post Type(s)', false);
+        renderMultiselect('emoji', 'Select Emoji(s)', false);
+
+        load_graph('year');
         {% comment %} document.addEventListener("DOMContentLoaded", loadData); {% endcomment %}
 
     </script>

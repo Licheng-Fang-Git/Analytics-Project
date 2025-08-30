@@ -4,7 +4,181 @@
 
 
 {% block content %}
-    <h1>The front page</h1> 
+  <div class="bg-black shadow-md rounded-2xl p-6 w-2/5">
+      <h1 class="text-white font-medium font-bold text-3xl" >Welcome Trillium Team</h1> 
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gray-50">
+  
+  <!-- Impressions Card -->
+  <div class="bg-white shadow-md rounded-2xl p-6">
+    <div class="flex items-center justify-between">
+      <h2 class="text-gray-600 font-medium">Impressions</h2>
+      <div class="w-8 h-8 flex items-center justify-center rounded-full bg-purple-100 text-purple-600">
+        <a href = "{% url 'dashboard'%}"> ➝ </a>
+      </div>
+    </div>
+    <p class="text-3xl font-bold mt-4">111,365</p>
+    <p class="text-green-600 text-sm font-medium mt-2">
+      69.2% ↑ <span class="text-gray-500">more than last month</span>
+    </p>
+  </div>
+
+  <!-- Recent Post Card -->
+  <div class="bg-white shadow-md rounded-2xl p-6">
+    <div class="flex items-center justify-between">
+      <h2 class="text-gray-600 font-medium">Recent Post</h2>
+      <div class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600">
+        ✔
+      </div>
+    </div>
+    <p class="text-3xl font-bold mt-4">6,616</p>
+    <span class="text-xs text-red-500 font-semibold bg-red-100 px-2 py-1 rounded-md">NEEDS ATTENTION</span>
+    <p class="text-red-600 text-sm font-medium mt-2">
+      3.18% ↓ <span class="text-gray-500">going down</span>
+    </p>
+  </div>
+
+  <!-- Followers Card -->
+  <div class="bg-white shadow-md rounded-2xl p-6">
+    <div class="flex items-center justify-between">
+      <h2 class="text-gray-600 font-medium">Followers</h2>
+      <div class="w-8 h-8 flex items-center justify-center rounded-full bg-yellow-100 text-yellow-600">
+        ⬤
+      </div>
+    </div>
+    <p class="text-3xl font-bold mt-4">16,130</p>
+    <p class="text-green-600 text-sm font-medium mt-2">
+      79.5% ↑ <span class="text-gray-500">looks pretty good</span>
+    </p>
+  </div>
+  </div>
+  </div>
+
+  <!-- Follower Chart Card -->
+  <div class="grid grid-cols-2 gap-6 px-6 bg-gray-50">
+
+  <div class="bg-white shadow-md rounded-2xl p-6 ">
+    <div class="flex items-center justify-between">
+      <h2 class="text-gray-600 font-medium"> Total Follower Chart</h2>
+      <div class="w-8 h-8 flex items-center justify-center rounded-full bg-green-100 text-yellow-600">
+        📈
+      </div>
+    </div>
+    <p class="text-3xl font-bold mt-4">16,130</p>
+    <canvas id='followerChart'></canvas>
+  </div>
+
+  <div class="bg-white shadow-md rounded-2xl p-6 ">
+  <div class="flex items-center justify-between">
+      <h2 class="text-gray-600 font-medium"> Total Follower Chart</h2>
+      <div class="w-8 h-8 flex items-center justify-center rounded-full bg-green-100 text-yellow-600">
+        📈
+      </div>
+    </div>
+    <p class="text-3xl font-bold mt-4">15</p>
+    <canvas id='monthlyChart'></canvas>
+</div>
+</div>
+  
+  <canvas id='monthlyChart'></canvas>
+
+<script>
+  let follower_chart = null;
+
+  async function fetchFollowerData(){
+    let url = 'api/follower_chart/';
+    fetch(url)
+      .then(response => {
+          return response.json();
+      })
+      .then(data => {
+          console.log("Data received:", data);
+          followerChartShow(data)
+      })
+      .catch(error => {
+      console.error('Error fetching data:', error);
+      });
+
+    url = 'api/monthly_chart/';
+
+    fetch(url)
+      .then(response => {
+          return response.json();
+      })
+      .then(data => {
+          console.log("Data received:", data);
+          monthlyChartShow(data)
+      })
+      .catch(error => {
+      console.error('Error fetching data:', error);
+      });    
+
+  }
+  
+  function followerChartShow(data){
+
+    console.log(data.dates);
+    console.log(data.total_follower);
+
+    const ctx = document.getElementById('followerChart').getContext('2d');
+    console.log(ctx)
+
+    follower_chart = new Chart(ctx, {
+        type: 'line',
+        data: { // Correctly nest data-related properties here
+            labels: data.dates,
+            datasets: [{
+                label: 'Monthly Follower',
+                data: data.total_follower,
+                borderColor: 'rgb(191, 255, 0)',
+                tension: 0.1 // Optional: makes the line slightly curved instead of sharp angles
+            }]
+        },
+        options: { // Optional, but good for configuration
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+  }
+
+  function monthlyChartShow(data){
+
+    console.log(data.dates);
+    console.log(data.follower);
+
+    const ctx = document.getElementById('monthlyChart').getContext('2d');
+    console.log(ctx)
+
+    follower_chart = new Chart(ctx, {
+        type: 'line',
+        data: { // Correctly nest data-related properties here
+            labels: data.dates,
+            datasets: [{
+                label: 'Follower',
+                data: data.follower,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1 // Optional: makes the line slightly curved instead of sharp angles
+            }]
+        },
+        options: { // Optional, but good for configuration
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+  }
+
+  fetchFollowerData()
+
+</script>
+
+    
 {% endblock %}
 
 

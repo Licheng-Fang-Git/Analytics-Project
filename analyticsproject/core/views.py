@@ -8,6 +8,7 @@ from django import template
 import json
 from django.template.response import TemplateResponse
 
+filter_df = pd.DataFrame(list(LinkedInPost.objects.values()))
 # Create your views here.
 def index(request):
     return render(request, 'core/index.html' )
@@ -52,8 +53,6 @@ def table_data(request):
     comma_idx = filter_by.find(',')
     all_posts = LinkedInPost.objects.values()
     df = pd.DataFrame(list(all_posts))
-
-    print(df['time_of_posting'].head)
    
     if filter_by != '' and "," in filter_by:
         chosen_x = filter_by[:comma_idx]
@@ -79,3 +78,110 @@ def table_data(request):
         
     table_data = df_to_render.to_json(orient='records')
     return JsonResponse(table_data, safe=False)
+
+def unique_data(request):
+    all_data = LinkedInPost.objects.values()
+    df = pd.DataFrame(list(all_data))
+    df = df.dropna(subset=['category'])
+    
+    data = {
+        'year': df['year'].unique().tolist(),
+        'month': df['month'].unique().tolist(),
+        'day_of_week': df['day_of_week'].unique().tolist(),
+        'time_interval' : df['time_of_posting'].unique().tolist(),
+        'category' : df['category'].unique().tolist(),
+        'sub_category' : df['sub_category'].unique().tolist(),
+        'emoji' : df['emoji'].unique().tolist(),
+        'type_post' : df['type_of_post'].unique().tolist()
+    }
+    
+    return JsonResponse(data)
+
+def filtered_data(request):
+    global filter_df
+    all_data = LinkedInPost.objects.values()
+    df = pd.DataFrame(list(all_data))
+
+    year = list(map(int, request.GET.getlist('year[]')))
+    month = request.GET.getlist('month[]')
+    day = request.GET.getlist('day_of_week[]')
+    time = request.GET.getlist('time_interval[]')
+    time = list(map(lambda s: datetime.strptime(s, "%H:%M:%S").time(), time))
+    category = request.GET.getlist('category[]')
+    sub_category = request.GET.getlist('sub_category[]')
+    emoji = list(map(bool, request.GET.getlist('emoji[]')))
+    type_post = request.GET.getlist('type_post[]')
+    last_filtered = ""
+    last_filtered_label = ""
+    # Apply filters progressively (just like in Streamlit)
+    if year:
+        df = df[df['year'].isin(year)]
+        last_filtered_label = "year"
+        last_filtered = year
+    if month:
+        df = df[df['month'].isin(month)]
+        last_filtered_label = "month"
+        last_filtered = month
+    if day:
+        df = df[df['day_of_week'].isin(day)]
+        last_filtered_label = "day_of_week"
+        last_filtered = day
+    if time:
+        df = df[df['time_of_posting'].isin(time)]
+        last_filtered_label = "time_of_posting"
+        last_filtered = time
+    if category:
+        df = df[df['category'].isin(category)]
+        last_filtered_label = "category"
+        last_filtered = category
+    if sub_category:
+        df = df[df['sub_category'].isin(sub_category)]
+        last_filtered_label = "sub_category"
+        last_filtered = sub_category
+    if emoji:
+        df = df[df['emoji'].isin(emoji)]
+        last_filtered_label = "emoji"
+        last_filtered = emoji
+    if type_post:
+        df = df[df['type_of_post'].isin(type_post)]
+        last_filtered_label = "type_of_post"
+        last_filtered = type_post
+    if last_filtered != "":
+        df['impressions'] = pd.to_numeric(df['impressions'], errors='coerce')
+        avg_impressions = df.groupby(last_filtered_label)['impressions'].mean().round()
+
+        filter_chart_data = {
+            'labels' : avg_impressions.index.tolist(),
+            'data' : avg_impressions.values.tolist(),
+            'x_label' : [last_filtered_label]
+        }
+        
+    else:
+        avg_impressions = df.groupby('year')['impressions'].mean().round()
+        filter_chart_data = {
+            'labels' : avg_impressions.index.tolist(),
+            'data' : avg_impressions.values.tolist(),
+            'x_label' : ['']
+        }
+    filter_df = df
+        # Return filtered data
+    return JsonResponse(filter_chart_data)
+
+def filter_select_unique(request):
+    global filter_df
+    df = filter_df
+
+    filter_select_data = {
+        'year': df['year'].unique().tolist(),
+        'month': df['month'].unique().tolist(),
+        'day_of_week': df['day_of_week'].unique().tolist(),
+        'time_interval' : df['time_of_posting'].unique().tolist(),
+        'category' : df['category'].unique().tolist(),
+        'sub_category' : df['sub_category'].unique().tolist(),
+        'emoji' : df['emoji'].unique().tolist(),
+        'type_post' : df['type_of_post'].unique().tolist()
+    }
+    print(filter_select_data)
+
+    return JsonResponse(filter_select_data)
+
