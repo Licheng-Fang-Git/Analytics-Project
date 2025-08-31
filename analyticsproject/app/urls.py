@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import index, contact, dashboard, chart_data, table_data, unique_data, filtered_data, filter_select_unique
+from core.views import index, contact, dashboard, chart_data, table_data, unique_data, filtered_data, filter_select_unique, multi_graph_page
 from overall.views import follower_chart, monthly_chart
 
 urlpatterns = [
@@ -24,11 +24,12 @@ urlpatterns = [
     path("", index, name='index'),
     path("contact/", contact, name='contact' ),
     path("dashboard/", dashboard, name ='dashboard'),
+    path("multiGraphPage", multi_graph_page, name='multiGraphPage'),
     path("api/chart_data/", chart_data, name='chart_data'),
     path("api/table_data/", table_data, name='table_data'),
     path('api/unique_data/', unique_data, name = 'unique_data'),
     path('api/filtered_data/', filtered_data, name = 'filitered_data'),
     path('api/filter_select/', filter_select_unique, name='filter_select'),
     path('api/follower_chart/', follower_chart, name='follower_chart'),
-    path('api/monthly_chart/', monthly_chart, name='monthly_chart')
+    path('api/monthly_chart/', monthly_chart, name='monthly_chart'),
 ]

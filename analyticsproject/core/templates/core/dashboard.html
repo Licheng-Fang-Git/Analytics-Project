@@ -4,8 +4,11 @@
 
 
 {% block content %}
-    <div class="bg-black shadow-md rounded-2xl p-6 w-2/5">
+    <div class="bg-black shadow-md rounded-2xl p-6 w-2/5 flex justify-between items-center">
         <h1 class="text-white font-medium font-bold text-3xl" >Dashboard Page</h1> 
+        <div class="w-20 h-8 flex items-center justify-center rounded-full bg-green-100 text-yellow-600">
+         <a href = "{% url 'multiGraphPage'%}"> ➝ </a>
+      </div>
     </div>
 
     <main class="flex-1 p-6 shadow-md bg-gray-200">
@@ -113,7 +116,7 @@
             return value;
         };
 
-        function load_graph(chosen_x) 
+        function load_graph(chosen_x)
         {
             // Construct the URL with the query parameter
             const url = `{% url 'chart_data' %}?filter_by=${chosen_x}`;
@@ -124,7 +127,7 @@
                 })
                 .then(data => {
                     console.log("Data received:", data);
-                    updateChart(data, chosen_x);
+                    updateChart(data, chosen_x)
                 })
                 .catch(error => {
                 console.error('Error fetching data:', error);
@@ -133,6 +136,7 @@
 
         function updateChart(data, chosen_x) 
         {
+            console.log('chart', data)
             const ctx = document.getElementById('impressionsChart').getContext('2d');
 
             const barColors = [
@@ -215,6 +219,11 @@
         }
 
         function showDataFrame(chosen_x, showXVal){
+            console.log(chosen_x, showXVal)
+            if(showXVal == "F&O"){
+                showXVal = "FnO";
+            }
+            console.log(showXVal)
             const url = `{% url 'table_data' %}?filter_by=${[chosen_x, showXVal]}`;
             
             fetch(url)

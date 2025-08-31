@@ -3,10 +3,11 @@ from django.shortcuts import render
 from django.db.models import Avg
 from .models import LinkedInPost
 import pandas as pd
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django import template
 import json
-from django.template.response import TemplateResponse
+
+import plotly.express as px
 
 filter_df = pd.DataFrame(list(LinkedInPost.objects.values()))
 # Create your views here.
@@ -19,6 +20,9 @@ def contact(request):
 def dashboard(request):
     chart_data(request)
     return render(request, 'core/dashboard.html')
+
+def multi_graph_page(request):
+    return render(request, 'core/multigraph.html')
 
 def chart_data(request):
     filter_by = request.GET.get('filter_by', 'day_of_week')
@@ -53,7 +57,7 @@ def table_data(request):
     comma_idx = filter_by.find(',')
     all_posts = LinkedInPost.objects.values()
     df = pd.DataFrame(list(all_posts))
-   
+    print(filter_by)
     if filter_by != '' and "," in filter_by:
         chosen_x = filter_by[:comma_idx]
         label_x = filter_by[comma_idx+1:]
@@ -62,6 +66,9 @@ def table_data(request):
             filtered_df = df[df[chosen_x] == True].copy()
         elif label_x == 'false':
             filtered_df = df[df[chosen_x] == False].copy()
+        elif label_x == 'FnO':
+            filtered_df = df[df[chosen_x] == 'F&O'].copy()
+            print(filtered_df[chosen_x], filtered_df['post_title'])
         elif ':' in label_x:
             filtered_df = df[df[chosen_x] == datetime.strptime(label_x, "%H:%M:%S").time()].copy()
         else:
@@ -181,7 +188,10 @@ def filter_select_unique(request):
         'emoji' : df['emoji'].unique().tolist(),
         'type_post' : df['type_of_post'].unique().tolist()
     }
-    print(filter_select_data)
 
     return JsonResponse(filter_select_data)
+
+
+    
+
 
