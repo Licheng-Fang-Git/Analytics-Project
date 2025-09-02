@@ -1,0 +1,111 @@
+{% extends 'core/base.html'%}
+
+{% block title%}Content Language Stats{% endblock%}
+
+{% block content %}
+
+    <h1>Hastags</h1>
+
+    <div class="max-h-[450px] overflow-y-scroll">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 table-auto">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Hastags
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Posts
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Average Impressions
+                    </th>
+                </tr>
+            </thead>
+            <tbody id= "hastagTableBody" >
+            </tbody>
+        </table>
+    </div>
+
+    <button onclick='fetchHashtags()'>Fetch</button>
+
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="overflow-x-auto">
+        <div class="p-1.5 min-w-full inline-block align-middle">
+            <div class="border border-gray-200 rounded-lg overflow-hidden dark:border-neutral-700">
+                <table class="w-full text-left">
+                <thead class = "bg-gray-100">
+                    <tr>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">N0.</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Title</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Link</th>
+                    <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Impressions</th>
+                    <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Day of Week</th>
+                    <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Post Type</th>
+                    <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Created Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200" id = "specificHashtagTable" >
+
+                </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        async function fetchHashtags(){
+            const url = "{% url 'get_hashtags' %}";
+            const response = await fetch(url);
+            const data = await response.json();
+
+            const tableBody = document.getElementById("hastagTableBody");
+
+            for (let i = 0; i < data.hashtags.length; i++){
+                tableBody.innerHTML += `
+
+                <tr class="bg-gray-800 dark:bg-gray-800" onclick="getHashtagInfo('${data.hashtags[i].substring(1)}')">
+                    <th scope="row" class="px-6 py-4 font-medium text-white whitespace-nowrap dark:text-white">
+                        ${data.hashtags[i]}
+                    </th>
+                    <td class="px-6 py-4">
+                        ${data.count[i]}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${data.impressions[i]}
+                    </td>
+                </tr>
+                `;
+            } 
+        }
+
+        async function getHashtagInfo(hashtag){
+            console.log(hashtag)
+            
+            const url = `{% url 'get_hashtag_table' %}?filter_by=${hashtag}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            console.log( data)
+            document.getElementById("specificHashtagTable").innerHTML = ""
+            for(let i =0; i < data.post_title.length; i++){
+                document.getElementById("specificHashtagTable").innerHTML += `
+                    <tr class="divide-x divide-gray-200 dark:divide-neutral-700">
+                        <td class = "py-4 px-6 text-gray-700">${i+1}</td>
+                        <td class = "py-4 px-6 text-gray-700 font-medium" >
+                            <p class = "truncate max-w-xs">
+                                ${data.post_title[i]}
+                            </p>
+                        </td>
+                        <td><a href="${data.post_link[i]}" target='_blank' class=" "py-4 px-6 text-blue-600 hover:underline underline text-blue-600 hover:text-blue-800 visited:text-purple-600">Link</td>
+                        <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800">${data.impressions[i]}</td>
+                        <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800">${data.day_of_week[i]}</td>
+                        <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800">${data.type_of_post[i]}</td>
+                        <td class = "px-6 py-4 whitespace-nowrap text-sm text-gray-800">${data.created_date[i]}</td>
+                    </tr>`;
+            }
+        }
+ 
+    </script>
+
+
+{% endblock %}

@@ -6,10 +6,11 @@ import pandas as pd
 from django.http import HttpResponse, JsonResponse
 from django import template
 import json
-
+import re
 import plotly.express as px
 
 filter_df = pd.DataFrame(list(LinkedInPost.objects.values()))
+hashtag_df = pd.DataFrame()
 # Create your views here.
 def index(request):
     return render(request, 'core/index.html' )
@@ -21,8 +22,8 @@ def dashboard(request):
     chart_data(request)
     return render(request, 'core/dashboard.html')
 
-def multi_graph_page(request):
-    return render(request, 'core/multigraph.html')
+def language(request):
+    return render(request, 'core/language.html')
 
 def chart_data(request):
     filter_by = request.GET.get('filter_by', 'day_of_week')
@@ -53,11 +54,12 @@ def chart_data(request):
 
 
 def table_data(request):
+    global filter_df
     filter_by = request.GET.get('filter_by', '')
     comma_idx = filter_by.find(',')
     all_posts = LinkedInPost.objects.values()
     df = pd.DataFrame(list(all_posts))
-    print(filter_by)
+
     if filter_by != '' and "," in filter_by:
         chosen_x = filter_by[:comma_idx]
         label_x = filter_by[comma_idx+1:]
@@ -190,6 +192,65 @@ def filter_select_unique(request):
     }
 
     return JsonResponse(filter_select_data)
+
+def get_hashtags(request):
+    global hashtag_df
+    all_data = LinkedInPost.objects.values()
+    df = pd.DataFrame(list(all_data))
+    hashtags = df["post_title"].dropna().apply(lambda x: re.findall(r"#\w+", str(x)))
+    hashtag_dictionary = {}
+    for row in hashtags:
+        if row:
+            for hashtag in row:
+             
+                if hashtag in hashtag_dictionary:
+                    hashtag_dictionary[hashtag][0] += 1
+                else:
+                    hashtag_dictionary[hashtag] = [1]
+            
+    df['hastags'] = df["post_title"].dropna().apply(lambda x: re.findall(r"#\w+", str(x)))
+    df_exploded = df.explode('hastags')
+    hashtag_df = df_exploded.copy()
+    df_grouped = df_exploded.groupby('hastags')['impressions'].mean().round()
+
+    # sorting values in descending order
+    sorted_hashtags = dict(sorted(hashtag_dictionary.items(), key=lambda item: item[1], reverse=True))
+    hashtag_series = pd.Series(df_grouped)
+    for hashtag, impression in hashtag_series.items():
+        if hashtag in sorted_hashtags:
+            sorted_hashtags[hashtag].append(impression)
+    hashtag_counts = [ val[0] for val in sorted_hashtags.values()]
+    hashtag_impressions = [ val[1] for val in sorted_hashtags.values()]
+    data = {
+        'hashtags' : list(sorted_hashtags.keys()),
+        'count' : hashtag_counts,
+        'impressions' : hashtag_impressions
+
+    }
+    return JsonResponse(data)
+
+def get_hashtag_table(request):
+    global hashtag_df
+
+    hashtag = '#'+request.GET.get('filter_by', 'TrilliumTrading')
+
+    df = hashtag_df[hashtag_df['hastags'] == hashtag].copy()
+
+
+    df_to_table = df[
+        ['post_title','post_link', 'impressions', 'day_of_week', 'type_of_post', 'created_date']
+        ].copy()
+        
+    table_data = {
+        'post_title':df_to_table['post_title'].to_list(),
+        'post_link':df_to_table['post_link'].to_list(),
+        'impressions':df_to_table['impressions'].to_list(),
+        'day_of_week':df_to_table['day_of_week'].to_list(),
+        'type_of_post':df_to_table['type_of_post'].to_list(),
+        'created_date':df_to_table['created_date'].to_list()
+    }
+
+    return JsonResponse(table_data)
 
 
     

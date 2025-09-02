@@ -29,7 +29,7 @@
     <div class="flex items-center justify-between">
       <h2 class="text-gray-600 font-medium">Recent Post</h2>
       <div class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600">
-        ✔
+        <a href= "{% url 'language_page' %}">✔</a>
       </div>
     </div>
     <p class="text-3xl font-bold mt-4">6,616</p>
@@ -118,9 +118,6 @@
   
   function followerChartShow(data){
 
-    console.log(data.dates);
-    console.log(data.total_follower);
-
     const ctx = document.getElementById('followerChart').getContext('2d');
     console.log(ctx)
 
@@ -146,9 +143,6 @@
   }
 
   function monthlyChartShow(data){
-
-    console.log(data.dates);
-    console.log(data.follower);
 
     const ctx = document.getElementById('monthlyChart').getContext('2d');
     console.log(ctx)

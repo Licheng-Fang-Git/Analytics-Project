@@ -7,7 +7,7 @@
     <div class="bg-black shadow-md rounded-2xl p-6 w-2/5 flex justify-between items-center">
         <h1 class="text-white font-medium font-bold text-3xl" >Dashboard Page</h1> 
         <div class="w-20 h-8 flex items-center justify-center rounded-full bg-green-100 text-yellow-600">
-         <a href = "{% url 'multiGraphPage'%}"> ➝ </a>
+          ➝ 
       </div>
     </div>
 
@@ -244,7 +244,7 @@
             const tbody = document.querySelector("#dataTable tbody");
             tbody.innerHTML = '';
             apiData.forEach((row, i) => {
-                tbody.innerHTML +=`
+                tbody.innerHTML += `
                 <tr class="divide-x divide-gray-200 dark:divide-neutral-700">
                     <td class = "py-4 px-6 text-gray-700">${i+1}</td>
                     <td class = "py-4 px-6 text-gray-700 font-medium" >
@@ -260,7 +260,7 @@
                 </tr>`;
                     
             });  
-        }
+        }``
 
         function to_date(millisecondNum){
             const newDate = new Date(millisecondNum);
