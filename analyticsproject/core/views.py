@@ -56,9 +56,13 @@ def chart_data(request):
 def table_data(request):
     global filter_df
     filter_by = request.GET.get('filter_by', '')
+    yes_filter = request.GET.get('yes_filter')
     comma_idx = filter_by.find(',')
     all_posts = LinkedInPost.objects.values()
-    df = pd.DataFrame(list(all_posts))
+    if yes_filter:
+        df = filter_df.copy()
+    else:
+        df = pd.DataFrame(list(all_posts))
 
     if filter_by != '' and "," in filter_by:
         chosen_x = filter_by[:comma_idx]

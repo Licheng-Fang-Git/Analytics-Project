@@ -126,7 +126,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log("Data received:", data);
                     updateChart(data, chosen_x)
                 })
                 .catch(error => {
@@ -136,7 +135,6 @@
 
         function updateChart(data, chosen_x) 
         {
-            console.log('chart', data)
             const ctx = document.getElementById('impressionsChart').getContext('2d');
 
             const barColors = [
@@ -210,7 +208,7 @@
                         if (elements.length > 0){
                             const clickedElement = elements[0].index;
                             const xLabel = data.labels[clickedElement];
-                            showDataFrame(chosen_x, xLabel);
+                            showDataFrame(chosen_x, xLabel, false);
                         }
                     }
 
@@ -218,13 +216,18 @@
             });
         }
 
-        function showDataFrame(chosen_x, showXVal){
-            console.log(chosen_x, showXVal)
+        function showDataFrame(chosen_x, showXVal, filter){
+            console.log(chosen_x, showXVal, filter);
             if(showXVal == "F&O"){
                 showXVal = "FnO";
             }
-            console.log(showXVal)
-            const url = `{% url 'table_data' %}?filter_by=${[chosen_x, showXVal]}`;
+            let url = ""
+            if (filter){
+                url = `{% url 'table_data' %}?filter_by=${[chosen_x, showXVal]}&yes_filter=true`;
+            }
+            else{
+                url = `{% url 'table_data' %}?filter_by=${[chosen_x, showXVal]}&yes_filter=false`;
+            }
             
             fetch(url)
                 .then(response => {
@@ -455,7 +458,7 @@
                         if (elements.length > 0){
                             const clickedElement = elements[0].index;
                             const xLabel = data.labels[clickedElement];
-                            showDataFrame(data.x_label, xLabel);
+                            showDataFrame(data.x_label, xLabel, true);
                         }
                     }
 
@@ -474,7 +477,7 @@
             for (let key in data){
                 selectionDictionary[key] = data[key];
             }
-            console.log(selectionDictionary)
+
             document.getElementById('filterSelections').innerHTML = ''
             for (let key in selectionDictionary){
                 let uniqueId = key+"1";
